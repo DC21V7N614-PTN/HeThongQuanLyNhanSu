@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Nhân Sự</title>
+    <link rel="stylesheet" href="assets/styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Navigation Sidebar -->
+        <nav class="nav-sidebar" id="sidebar">
+            <div style="padding: 0 1.5rem; margin-bottom: 2rem;">
+                <h2 style="color: var(--color-primary); font-size: 1.25rem; font-weight: 700;">
+                    <i class="fas fa-users"></i> HR Management
+                </h2>
+            </div>
+
+            <div>
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-dashboard"></i> Tổng quan
+                </a>
+                <a href="#employees" class="nav-item" data-page="employees">
+                    <i class="fas fa-users"></i> Nhân viên
+                </a>
+                <a href="#departments" class="nav-item" data-page="departments">
+                    <i class="fas fa-building"></i> Phòng ban
+                </a>
+                <a href="#positions" class="nav-item" data-page="positions">
+                    <i class="fas fa-briefcase"></i> Chức vụ
+                </a>
+                <a href="#reports" class="nav-item" data-page="reports">
+                    <i class="fas fa-chart-bar"></i> Báo cáo
+                </a>
+                <a href="#settings" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i> Cài đặt
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <button class="btn btn-secondary mb-4" id="menuToggle" style="display: none;">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Tổng quan hệ thống</h1>
+                        <p style="color: var(--color-muted-foreground);">Chào mừng bạn đến với hệ thống quản lý nhân sự</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div class="card" style="text-align: center;">
+                            <i class="fas fa-users" style="font-size: 2rem; color: var(--color-primary); margin-bottom: 1rem;"></i>
+                            <h3 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="totalEmployees">0</h3>
+                            <p style="color: var(--color-muted-foreground);">Tổng nhân viên</p>
+                        </div>
+
+                        <div class="card" style="text-align: center;">
+                            <i class="fas fa-building" style="font-size: 2rem; color: var(--color-accent); margin-bottom: 1rem;"></i>
+                            <h3 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="totalDepartments">0</h3>
+                            <p style="color: var(--color-muted-foreground);">Phòng ban</p>
+                        </div>
+
+                        <div class="card" style="text-align: center;">
+                            <i class="fas fa-briefcase" style="font-size: 2rem; color: var(--color-secondary); margin-bottom: 1rem;"></i>
+                            <h3 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="totalPositions">0</h3>
+                            <p style="color: var(--color-muted-foreground);">Chức vụ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Page -->
+            <div id="employees-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="flex justify-between items-center">
+                            <h1 class="card-title">Quản lý nhân viên</h1>
+                            <button class="btn btn-primary" id="addEmployeeBtn">
+                                <i class="fas fa-plus"></i> Thêm nhân viên
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="search-container">
+                        <input type="text" class="form-input search-input" id="employeeSearch" placeholder="Tìm kiếm nhân viên...">
+                        <select class="filter-select" id="departmentFilter">
+                            <option value="">Tất cả phòng ban</option>
+                        </select>
+                        <select class="filter-select" id="positionFilter">
+                            <option value="">Tất cả chức vụ</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Mã NV</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Phòng ban</th>
+                                    <th>Chức vụ</th>
+                                    <th>Ngày vào làm</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody">
+                                <!-- Employee data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Departments Page -->
+            <div id="departments-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="flex justify-between items-center">
+                            <h1 class="card-title">Quản lý phòng ban</h1>
+                            <button class="btn btn-primary" id="addDepartmentBtn">
+                                <i class="fas fa-plus"></i> Thêm phòng ban
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Mã PB</th>
+                                    <th>Tên phòng ban</th>
+                                    <th>Mô tả</th>
+                                    <th>Số nhân viên</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentTableBody">
+                                <!-- Department data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Positions Page -->
+            <div id="positions-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="flex justify-between items-center">
+                            <h1 class="card-title">Quản lý chức vụ</h1>
+                            <button class="btn btn-primary" id="addPositionBtn">
+                                <i class="fas fa-plus"></i> Thêm chức vụ
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Mã CV</th>
+                                    <th>Tên chức vụ</th>
+                                    <th>Cấp độ</th>
+                                    <th>Số nhân viên</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="positionTableBody">
+                                <!-- Position data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Báo cáo thống kê</h1>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;">Thống kê theo phòng ban</h3>
+                            <div id="departmentStats"></div>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;">Thống kê theo chức vụ</h3>
+                            <div id="positionStats"></div>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;">Thống kê lương</h3>
+                            <div id="salaryStats"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Xuất dữ liệu</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary" id="exportCSVBtn">
+                                <i class="fas fa-file-csv"></i> Xuất CSV
+                            </button>
+                            <button class="btn btn-secondary" id="exportJSONBtn">
+                                <i class="fas fa-file-code"></i> Xuất JSON
+                            </button>
+                            <button class="btn btn-secondary" id="printReportBtn">
+                                <i class="fas fa-print"></i> In báo cáo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Cài đặt hệ thống</h1>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;">Sao lưu dữ liệu</h3>
+                            <p style="color: var(--color-muted-foreground); margin-bottom: 1rem;">
+                                Sao lưu toàn bộ dữ liệu hệ thống
+                            </p>
+                            <button class="btn btn-primary" id="backupBtn">
+                                <i class="fas fa-download"></i> Sao lưu
+                            </button>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;">Khôi phục dữ liệu</h3>
+                            <p style="color: var(--color-muted-foreground); margin-bottom: 1rem;">
+                                Khôi phục dữ liệu từ file sao lưu
+                            </p>
+                            <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                            <button class="btn btn-secondary" id="restoreBtn">
+                                <i class="fas fa-upload"></i> Khôi phục
+                            </button>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;">Xóa dữ liệu</h3>
+                            <p style="color: var(--color-muted-foreground); margin-bottom: 1rem;">
+                                Xóa toàn bộ dữ liệu hệ thống
+                            </p>
+                            <button class="btn btn-destructive" id="clearDataBtn">
+                                <i class="fas fa-trash"></i> Xóa tất cả
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Thêm nhân viên mới</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+
+            <form id="employeeForm">
+                <div class="form-group">
+                    <label class="form-label" for="employeeId">Mã nhân viên *</label>
+                    <input type="text" class="form-input" id="employeeId" required>
+                    <div class="form-error" id="employeeIdError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Họ và tên *</label>
+                    <input type="text" class="form-input" id="fullName" required>
+                    <div class="form-error" id="fullNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email *</label>
+                    <input type="email" class="form-input" id="email" required>
+                    <div class="form-error" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phone">Số điện thoại</label>
+                    <input type="tel" class="form-input" id="phone">
+                    <div class="form-error" id="phoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="department">Phòng ban *</label>
+                    <select class="form-input" id="department" required>
+                        <option value="">Chọn phòng ban</option>
+                    </select>
+                    <div class="form-error" id="departmentError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="position">Chức vụ *</label>
+                    <select class="form-input" id="position" required>
+                        <option value="">Chọn chức vụ</option>
+                    </select>
+                    <div class="form-error" id="positionError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="startDate">Ngày vào làm *</label>
+                    <input type="date" class="form-input" id="startDate" required>
+                    <div class="form-error" id="startDateError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="salary">Lương cơ bản</label>
+                    <input type="number" class="form-input" id="salary" min="0" step="100000">
+                    <div class="form-error" id="salaryError"></div>
+                </div>
+
+                <div class="flex gap-2 justify-between mt-4">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Department Modal -->
+    <div id="departmentModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="departmentModalTitle">Thêm phòng ban mới</h2>
+                <button class="modal-close" id="closeDepartmentModal">&times;</button>
+            </div>
+
+            <form id="departmentForm">
+                <div class="form-group">
+                    <label class="form-label" for="departmentName">Tên phòng ban *</label>
+                    <input type="text" class="form-input" id="departmentName" required>
+                    <div class="form-error" id="departmentNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="departmentDescription">Mô tả</label>
+                    <textarea class="form-input" id="departmentDescription" rows="3"></textarea>
+                    <div class="form-error" id="departmentDescriptionError"></div>
+                </div>
+
+                <div class="flex gap-2 justify-between mt-4">
+                    <button type="button" class="btn btn-secondary" id="cancelDepartmentBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="saveDepartmentBtn">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Position Modal -->
+    <div id="positionModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="positionModalTitle">Thêm chức vụ mới</h2>
+                <button class="modal-close" id="closePositionModal">&times;</button>
+            </div>
+
+            <form id="positionForm">
+                <div class="form-group">
+                    <label class="form-label" for="positionName">Tên chức vụ *</label>
+                    <input type="text" class="form-input" id="positionName" required>
+                    <div class="form-error" id="positionNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="positionLevel">Cấp độ *</label>
+                    <select class="form-input" id="positionLevel" required>
+                        <option value="">Chọn cấp độ</option>
+                        <option value="1">Cấp 1 - Lãnh đạo cao cấp</option>
+                        <option value="2">Cấp 2 - Lãnh đạo trung cấp</option>
+                        <option value="3">Cấp 3 - Quản lý</option>
+                        <option value="4">Cấp 4 - Phó quản lý</option>
+                        <option value="5">Cấp 5 - Nhân viên chính</option>
+                        <option value="6">Cấp 6 - Nhân viên</option>
+                        <option value="7">Cấp 7 - Thực tập sinh</option>
+                    </select>
+                    <div class="form-error" id="positionLevelError"></div>
+                </div>
+
+                <div class="flex gap-2 justify-between mt-4">
+                    <button type="button" class="btn btn-secondary" id="cancelPositionBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="savePositionBtn">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="assets/scripts/main.js"></script>
+</body>
+
+</html>
